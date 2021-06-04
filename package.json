@@ -1,14 +1,14 @@
 {
-  "name": "07-restserver",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "api-transfer",
+  "version": "0.0.1",
+  "description": "money transfers",
+  "main": "app.js",
   "scripts": {
     "start": "node app",
-    "test": "nodemon app"
+    "start:dev": "nodemon app"
   },
   "keywords": [],
-  "author": "",
+  "author": "Johny Daniel Villegas Betancurth",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
