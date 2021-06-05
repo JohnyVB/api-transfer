@@ -1,35 +1,51 @@
-const { Role, Usuario } = require('../models');
+const roleModel = require('../models/role.model');
+const userModel = require('../models/user.model');
 
-const esRoleValido = async(rol = '') => {
 
-    const existeRol = await Role.findOne({ rol });
-    if ( !existeRol ) {
-        throw new Error(`El rol ${ rol } no está registrado en la BD`);
+const validRole = async (rol = '') => {
+
+    const role = await roleModel.findOne({ rol });
+    if (!role) {
+        throw new Error(`El rol ${rol} no está registrado en la BD`);
     }
 }
 
-const emailExiste = async( correo = '' ) => {
+const verifyEmail = async (email = '') => {
 
-    // Verificar si el correo existe
-    const existeEmail = await Usuario.findOne({ correo });
-    if ( existeEmail ) {
-        throw new Error(`El correo: ${ correo }, ya está registrado`);
+    const user = await userModel.findOne({ email });
+    if (user) {
+        throw new Error(`El correo: ${email}, ya está registrado`);
     }
 }
 
-const existeUsuarioPorId = async( id ) => {
-
-    // Verificar si el correo existe
-    const existeUsuario = await Usuario.findById(id);
-    if ( !existeUsuario ) {
-        throw new Error(`El id no existe ${ id }`);
+const verifyEmailLogin = async(email = '') => {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+        throw new Error(`El usuario con el correo: ${email}, no existe`);
     }
 }
 
-const coleccionesPermitidas = (coleccion = '', colecciones = []) => {
-    const incluida = colecciones.includes(coleccion);
-    if (!incluida) {
-        throw new Error(`La colección ${ coleccion } no esta permitida, ${colecciones}`);
+const verifyDocumentLogin = async(document = 0) => {
+
+    const user = await userModel.findOne({document});
+    if (!user) {
+        throw new Error(`El usuario con el documento: ${document}, no existe`);
+    }
+}
+
+const verifyUserId = async (id) => {
+
+    const user = await userModel.findById(id);
+    if (!user) {
+        throw new Error(`El id no existe ${id}`);
+    }
+}
+
+const allowedCollections = (collection = '', collections = []) => {
+
+    const included = collections.includes(collection);
+    if (!included) {
+        throw new Error(`La colección ${collection} no esta permitida, ${collections}`);
     }
 
     return true;
@@ -38,9 +54,11 @@ const coleccionesPermitidas = (coleccion = '', colecciones = []) => {
 
 
 module.exports = {
-    esRoleValido,
-    emailExiste,
-    existeUsuarioPorId,
-    coleccionesPermitidas
+    validRole,
+    verifyEmail,
+    verifyEmailLogin,
+    verifyDocumentLogin,
+    verifyUserId,
+    allowedCollections
 }
 
