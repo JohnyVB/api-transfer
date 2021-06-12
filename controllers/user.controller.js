@@ -2,24 +2,18 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const userModel = require('../models/user.model');
+const rolModel = require('../models/role.model');
 
-//Traer todos los usuarios
-const usersGet = async (req = request, res = response) => {
-
+//Traer un usuario
+const userGet = async (req = request, res = response) => {
+    
     try {
-        const { end = 10, start = 0 } = req.query;
-        const query = { state: true };
+        const { id } = req.query;;
 
-        const [amount, users] = await Promise.all([
-            userModel.countDocuments(query),
-            userModel.find(query)
-                .skip(Number(start))
-                .limit(Number(end))
-        ]);
+        const user = await userModel.findById(id);
 
         res.status(200).json({
-            amount,
-            users
+            user
         });
     } catch (error) {
         return res.status(500).send({
@@ -30,15 +24,15 @@ const usersGet = async (req = request, res = response) => {
 }
 
 //Crear usuario
-const usersPost = async (req, res = response) => {
+const userPost = async (req = request, res = response) => {
 
     try {
-        const { firstName, lastName, typeDocument, document, expeditionDate, email, password } = req.body;
-        const user = new userModel({firstName, lastName, typeDocument, document, expeditionDate, email, password});
+        const { ...userAll } = req.body;
+        const user = new userModel(userAll);
 
         // Encriptar la contraseña
         const salt = bcryptjs.genSaltSync();
-        user.password = bcryptjs.hashSync(password, salt);
+        user.password = bcryptjs.hashSync(userAll.password, salt);
 
         // Guardar en BD
         await user.save();
@@ -47,19 +41,20 @@ const usersPost = async (req, res = response) => {
             user
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).send({
-            msg: 'Error en usersPost()',
+            msg: 'Error en userPost()',
             error
         });
     }
 }
 
-//Actualizar usuario
-const userPut = async (req, res = response) => {
+//Actualizar datos usuario
+const userPut = async (req = request, res = response) => {
 
     try {
         const { id } = req.params;
-        const { _id, password, email, ...userAll } = req.body;
+        const { _id, password, email, document, ...userAll } = req.body;
 
         if (password) {
             // Encriptar la contraseña
@@ -78,12 +73,45 @@ const userPut = async (req, res = response) => {
     }
 }
 
+const userCashier = async(req = request, res = response) => {
+
+    try {
+        const { id } = req.query;
+        const { cashboxId } = req.body;
+
+        var update = {
+            rol: 'CASHIER_ROLE',
+            $push: {
+                cashBox: cashboxId
+            }
+        }
+
+        const user = await userModel.findOneAndUpdate({ _id: id}, update, { new: true});
+
+        res.status(200).send({
+            user
+        });
+        
+    } catch (error) {
+        return res.status(500).send({
+            msg: 'Error en userCashier()',
+            error
+        });
+    }
+}
+
 //Deshabilitar usuario
-const userPatch = (req, res = response) => {
+const userPatch = async (req = request, res = response) => {
     
     try {
+
+        const { id } = req.query;
+        const {...userAll } = req.body;
+
+        const user = await userModel.findOneAndUpdate({ _id: id }, userAll);
+
         res.status(200).json({
-            msg: 'patch API - usuariosPatch'
+            user
         });
     } catch (error) {
         return res.status(500).send({
@@ -93,12 +121,10 @@ const userPatch = (req, res = response) => {
     }
 }
 
-
-
-
 module.exports = {
-    usersGet,
-    usersPost,
+    userGet,
+    userPost,
     userPut,
+    userCashier,
     userPatch,
 }

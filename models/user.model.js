@@ -14,7 +14,7 @@ const userSchema = Schema({
 
     typeDocument:{
         type: String,
-        require: [true, 'El tipo de documento es necesario']
+        require: [true, 'El tipo de documento es requerido']
     },
 
     document: {
@@ -30,12 +30,12 @@ const userSchema = Schema({
 
     email: {
         type: String,
-        required: [true, 'El correo es obligatorio'],
+        required: [true, 'El correo es requerido'],
         unique: true
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es obligatoria'],
+        required: [true, 'La contraseña es requerida'],
     },
 
     rol: {
@@ -43,13 +43,16 @@ const userSchema = Schema({
         default: 'USER_ROLE'
     },
 
+    cashBox:[{
+        type: Schema.Types.ObjectId,
+        ref: 'cashbox'
+    }],
+
     state: {
         type: Boolean,
         default: true
     }
 });
-
-
 
 userSchema.methods.toJSON = function() {
     const { __v, password, _id, ...user  } = this.toObject();

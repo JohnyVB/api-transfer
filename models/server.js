@@ -2,19 +2,23 @@ const express = require('express');
 const cors = require('cors');
 
 const { dbConnection } = require('../database/config');
+const { createCashboxTest } = require('../helpers/initial-setup');
 
 class Server {
 
     constructor() {
+
         this.app = express();
         this.port = process.env.PORT;
 
         this.path = {
             auth: '/api/auth',
-            usuarios: '/api/users',
-            buscar: '/api/search'
-        }
+            users: '/api/users',
+            search: '/api/search',
+            transaction: '/api/transactions',
+            cashbox: '/api/cashbox'
 
+        }
 
         // Conectar a base de datos
         this.conectarDB();
@@ -24,6 +28,8 @@ class Server {
 
         // Rutas de mi aplicación
         this.routes();
+
+        this.initialSetup();
     }
 
     async conectarDB() {
@@ -46,8 +52,14 @@ class Server {
     routes() {
 
         this.app.use(this.path.auth, require('../routes/auth.routes'));
-        this.app.use(this.path.usuarios, require('../routes/user.routes'));
-        this.app.use(this.path.buscar, require('../routes/search.routes'));
+        this.app.use(this.path.users, require('../routes/user.routes'));
+        this.app.use(this.path.search, require('../routes/search.routes'));
+        this.app.use(this.path.transaction, require('../routes/transaction.routes'));
+        this.app.use(this.path.cashbox, require('../routes/cashbox.routes'));
+    }
+
+    async initialSetup(){
+        await createCashboxTest();
     }
 
     listen() {
@@ -57,8 +69,5 @@ class Server {
     }
 
 }
-
-
-
 
 module.exports = Server;

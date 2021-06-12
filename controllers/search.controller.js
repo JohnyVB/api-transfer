@@ -9,7 +9,7 @@ const allowedColletion = [
 ];
 
 //Busqueda de usuario
-const searchUser = async (word = '', res = response) => {
+const searchUsers = async (word = '', res = response) => {
 
     try {
         const mongoId = ObjectId.isValid(word);
@@ -25,7 +25,12 @@ const searchUser = async (word = '', res = response) => {
         const regex = new RegExp(word, 'i');
 
         const users = await userModel.find({
-            $or: [{ firstName: regex }, { lastName: regex }, { email: regex }],
+            $or: [
+                    { firstName: regex }, 
+                    { lastName: regex },
+                    { document: regex }, 
+                    { email: regex }
+                ],
             $and: [{ state: true }]
         });
 
@@ -34,7 +39,7 @@ const searchUser = async (word = '', res = response) => {
         });
     } catch (error) {
         return res.status(500).send({
-            msg: 'Error en searchUser()',
+            msg: 'Error en searchUsers()',
             error
         });
     }
@@ -70,7 +75,7 @@ const search = async (req = request, res = response) => {
 
         switch (colletion.toLowerCase()) {
             case 'users':
-                searchUser(word, res);
+                searchUsers(word, res);
                 break;
 
             case 'transactions':

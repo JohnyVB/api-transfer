@@ -1,14 +1,5 @@
-const roleModel = require('../models/role.model');
-const userModel = require('../models/user.model');
-
-
-const validRole = async (rol = '') => {
-
-    const role = await roleModel.findOne({ rol });
-    if (!role) {
-        throw new Error(`El rol ${rol} no está registrado en la BD`);
-    }
-}
+const cashboxModel = require('../models/cashbox.model');
+const transactionModel = require('../models/transaction.model');
 
 const verifyEmail = async (email = '') => {
 
@@ -18,10 +9,18 @@ const verifyEmail = async (email = '') => {
     }
 }
 
-const verifyEmailLogin = async(email = '') => {
+const verifyEmailLogin = async (email = '') => {
     const user = await userModel.findOne({ email });
     if (!user) {
         throw new Error(`El usuario con el correo: ${email}, no existe`);
+    }
+}
+
+const verifyDocument = async (document = 0) => {
+    
+    const user = await userModel.findOne({document});
+    if (user) {
+        throw new Error(`El documento: ${document}, ya está registrado`);
     }
 }
 
@@ -37,7 +36,21 @@ const verifyUserId = async (id) => {
 
     const user = await userModel.findById(id);
     if (!user) {
-        throw new Error(`El id no existe ${id}`);
+        throw new Error(`El usuario con el id no existe ${id}`);
+    }
+}
+
+const verifyTransactionId = async (id) => {
+    const transaction = await transactionModel.findById(id);
+    if (!transaction) {
+        throw new Error(`La transacción con el id no existe ${id}`);
+    }
+}
+
+const verifyCashboxId = async (id) => {
+    const cashbox = await cashboxModel.findById(id);
+    if (!cashbox) {
+        throw new Error(`La caja con el id no existe ${id}`);
     }
 }
 
@@ -54,11 +67,13 @@ const allowedCollections = (collection = '', collections = []) => {
 
 
 module.exports = {
-    validRole,
     verifyEmail,
     verifyEmailLogin,
+    verifyDocument,
     verifyDocumentLogin,
     verifyUserId,
+    verifyTransactionId,
+    verifyCashboxId,
     allowedCollections
 }
 
