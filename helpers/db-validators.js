@@ -1,5 +1,6 @@
 const cashboxModel = require('../models/cashbox.model');
 const transactionModel = require('../models/transaction.model');
+const userModel = require('../models/user.model');
 
 const verifyEmail = async (email = '') => {
 

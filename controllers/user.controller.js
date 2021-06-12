@@ -2,7 +2,6 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const userModel = require('../models/user.model');
-const rolModel = require('../models/role.model');
 
 //Traer un usuario
 const userGet = async (req = request, res = response) => {
@@ -91,7 +90,7 @@ const userCashier = async(req = request, res = response) => {
         res.status(200).send({
             user
         });
-        
+
     } catch (error) {
         return res.status(500).send({
             msg: 'Error en userCashier()',
