@@ -55,7 +55,14 @@ const loginAtm = async (req, res = response) => {
 
     const user = await userModel.findOne({ document });
 
-    await logEmail(user, password, res);
+    if (user.rol !== 'USER_ROLE') {
+        await logEmail(user, password, res); 
+    }else{
+        return res.status(400).send({
+            msg: 'Usuario / Password no son correctos - rol no valido'
+        });
+    }
+
 
 }
 
