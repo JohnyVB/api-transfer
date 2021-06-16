@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 const { validateFields } = require('../middlewares/validate-fields');
-const { loginUser, loginAtm, resetpass } = require('../controllers/auth.controller');
+const { loginUser, loginAtm, resetpass, updatepass } = require('../controllers/auth.controller');
 const { verifyEmailLogin, verifyDocumentLogin } = require('../helpers/db-validators');
 
 const router = Router();
@@ -26,5 +26,11 @@ router.post('/resetpass', [
     check('email').custom(verifyEmailLogin),
     validateFields
 ], resetpass);
+
+router.put('/updatepass', [
+    check('token', 'El token es requerido').not().isEmpty(),
+    check('password', 'La nueva password es requerida').not().isEmpty(),
+    validateFields
+], updatepass);
 
 module.exports = router; 

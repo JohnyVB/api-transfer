@@ -15,7 +15,7 @@ const sendEmail = async (email = '', token = '') => {
         if (error) {
             throw new Error('la conexion al servidor SMTP fallo', error)
         }else{
-            console.log('El servidor esta listo para enviar correos');
+            console.log('Correo enviado');
         }
     });
 

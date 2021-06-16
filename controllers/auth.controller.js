@@ -1,5 +1,6 @@
-const { response } = require('express');
-const bcryptjs = require('bcryptjs')
+const { request, response } = require('express');
+const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const userModel = require('../models/user.model');
 
@@ -40,7 +41,7 @@ const logEmail = async (user, password, res) => {
 
 
 
-const loginUser = async (req, res = response) => {
+const loginUser = async (req = request, res = response) => {
 
     const { email, password } = req.body;
 
@@ -50,7 +51,7 @@ const loginUser = async (req, res = response) => {
 
 }
 
-const loginAtm = async (req, res = response) => {
+const loginAtm = async (req = request, res = response) => {
 
     const { document, password } = req.body;
 
@@ -66,7 +67,7 @@ const loginAtm = async (req, res = response) => {
 
 }
 
-const resetpass = async (req, res = response) => {
+const resetpass = async (req = request, res = response) => {
     try {
         const { email } = req.body;
         const token = await generateJWT(email);
@@ -83,8 +84,34 @@ const resetpass = async (req, res = response) => {
     }
 }
 
+const updatepass = async (req = request, res = response) => {
+   
+    try {
+        const { token, password } = req.body;
+
+        const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
+
+        const salts = bcryptjs.genSaltSync();
+
+        const updatepass = bcryptjs.hashSync(password, salts)
+
+        const user = await userModel.findOneAndUpdate({email: uid}, {password: updatepass}, { new: true });
+
+        res.status(200).send({
+            user
+        });
+
+    } catch (error) {
+        return res.status(500).send({
+            msg: 'Error en updatepass()',
+            error
+        });
+    }
+}
+
 module.exports = {
     loginUser,
     loginAtm,
-    resetpass
+    resetpass,
+    updatepass
 }
