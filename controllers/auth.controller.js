@@ -4,6 +4,7 @@ const bcryptjs = require('bcryptjs')
 const userModel = require('../models/user.model');
 
 const { generateJWT } = require('../helpers/generate-jwt');
+const { sendEmail } = require('../helpers/nodemailerHandler');
 
 const logEmail = async (user, password, res) => {
     try {
@@ -63,10 +64,27 @@ const loginAtm = async (req, res = response) => {
         });
     }
 
+}
 
+const resetpass = async (req, res = response) => {
+    try {
+        const { email } = req.body;
+        const token = await generateJWT(email);
+        await sendEmail(email, token);
+
+        res.status(200).send({
+            msg: 'Correo enviado....'
+        });
+    } catch (error) {
+        return res.status(500).send({
+            msg: 'Error en emailVerify()',
+            error
+        });
+    }
 }
 
 module.exports = {
     loginUser,
-    loginAtm
+    loginAtm,
+    resetpass
 }
