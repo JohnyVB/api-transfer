@@ -20,13 +20,16 @@ router.post('/',[
     check('firstName', 'Los nombres son requeridos').not().isEmpty(),
     check('lastName', 'Los apellidos son requeridos').not().isEmpty(),
     check('typeDocument', 'El tipo de documento es requerido').not().isEmpty(),
-    check('document', 'El numero de documento es requerido').not().isEmpty(),
     check('document', 'El documento debe ser numerico').isNumeric(),
     check('document').custom(verifyDocument),
+    check('dateBirth', 'La fecha de nacimiento es requerida').not().isEmpty(),
+    check('countryBirth', 'El pais de nacimiento es requerido').not().isEmpty(),
+    check('cityBirth', 'La ciudad de nacimiento es requerido').not().isEmpty(),
     check('expeditionDate', 'La fecha de expedición de tu documento de indentidad es requerido').not().isEmpty(),
+    check('gender', 'El genero es requerido').not().isEmpty(),
     check('email', 'El correo no es válido').isEmail(),
-    check('email').custom( verifyEmail ),
-    check('password', 'El password debe de ser más de 6 letras').isLength({ min: 6 }), 
+    check('email').custom(verifyEmail),
+    check('password', 'El password debe de ser más de 6 caracteres').isLength({ min: 6 }), 
     validateFields
 ], userPost );
 

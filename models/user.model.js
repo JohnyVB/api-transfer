@@ -23,9 +23,29 @@ const userSchema = Schema({
         unique: true
     },
 
+    dateBirth: {
+        type: String,
+        required: [true, 'La fecha de nacimiento es requerida']
+    },
+
+    countryBirth: {
+        type: String,
+        required: [true, 'Pais de nacimiento es requerido']
+    },
+
+    cityBirth: {
+        type: String,
+        required: [true, 'Pais de nacimiento es requerido']
+    },
+
     expeditionDate: {
         type: String,
         required: [true, 'La fecha de expedición de tu documento de indentidad es requerido']
+    },
+
+    gender: {
+        type: String,
+        required: [true, 'El genero es requerido']
     },
 
     email: {
@@ -50,7 +70,7 @@ const userSchema = Schema({
 
     state: {
         type: Boolean,
-        default: true
+        default: false
     }
 });
 
