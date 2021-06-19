@@ -1,21 +1,22 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async (email = '', token = '') => {
-    const transporter = nodemailer.createTransport({
-        host: process.env.HOST,
-        port: process.env.PORTEMAIL,
-        secure: false,
-        auth: {
-            user: process.env.USEREMAIL,
-            pass: process.env.PASSSMTP
-        }
-    });
+const transporter = nodemailer.createTransport({
+    host: process.env.HOST,
+    port: process.env.PORTEMAIL,
+    secure: false,
+    auth: {
+        user: process.env.USEREMAIL,
+        pass: process.env.PASSSMTP
+    }
+});
 
+const sendEmail = async (email = '', token = '') => {
+    
     transporter.verify((error, success) => {
         if (error) {
-            throw new Error('la conexion al servidor SMTP fallo', error)
+            throw new Error('la conexión al servidor SMTP fallo', error)
         }else{
-            console.log('Correo enviado');
+            console.log('Conexión al servidor SMTP exitosa');
         }
     });
 
@@ -30,6 +31,29 @@ const sendEmail = async (email = '', token = '') => {
     });
 }
 
+const sendUid = async (email = '', token = '') => {
+
+    transporter.verify((error, success) => {
+        if (error) {
+            throw new Error('la conexión al servidor SMTP fallo', error)
+        }else{
+            console.log('Conexión al servidor SMTP exitosa');
+        }
+    });
+
+    await transporter.sendMail({
+        from: `Transferencia y Giros <${process.env.USEREMAIL}>`,
+        to: email,
+        subject: 'NOTIFICACIÓN: Regisro en Transferencias y giros',
+        html: `<p>Se ha enviado este correo para activar su cuenta en Transferencias y giros, click</p> 
+               <p>siguiente link: </p><a href='http://localhost:4200/activation/${token}'>Click aqui</a>
+               <p><strong>Si no realizo el registro por favor omitir este correo.</strong></p>   
+            `
+    });
+
+}
+
 module.exports = {
-    sendEmail
+    sendEmail,
+    sendUid
 };

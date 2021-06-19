@@ -2,8 +2,9 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const userModel = require('../models/user.model');
+const { generateJWT } = require('../helpers/generate-jwt');
+const { sendUid } = require('../helpers/nodemailerHandler');
 
-//Traer un usuario
 const userGet = async (req = request, res = response) => {
     
     try {
@@ -22,19 +23,20 @@ const userGet = async (req = request, res = response) => {
     }
 }
 
-//Crear usuario
 const userPost = async (req = request, res = response) => {
 
     try {
         const { ...userAll } = req.body;
         const user = new userModel(userAll);
 
-        // Encriptar la contraseña
         const salt = bcryptjs.genSaltSync();
         user.password = bcryptjs.hashSync(userAll.password, salt);
 
-        // Guardar en BD
         await user.save();
+        
+        const token = await generateJWT(user._id);
+
+        await sendUid(user.email, token);
 
         res.status(200).json({
             user
@@ -48,7 +50,6 @@ const userPost = async (req = request, res = response) => {
     }
 }
 
-//Actualizar datos usuario
 const userPut = async (req = request, res = response) => {
 
     try {
@@ -99,7 +100,6 @@ const userCashier = async(req = request, res = response) => {
     }
 }
 
-//Deshabilitar usuario
 const userPatch = async (req = request, res = response) => {
     
     try {

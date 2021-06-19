@@ -109,9 +109,30 @@ const updatepass = async (req = request, res = response) => {
     }
 }
 
+const activateUser = async (req = request, res = response) => {
+
+    try {
+        const { token } = req.body;
+
+        const { uid } = await jwt.verify(token, process.env.SECRETORPRIVATEKEY);
+
+        const user = await userModel.findOneAndUpdate({ _id: uid }, { state: true }, { new: true });
+
+        res.status(200).send({
+            user
+        });
+    } catch (error) {
+        return res.status(500).send({
+            msg: 'Error en activateUser()',
+            error
+        });
+    }
+}  
+
 module.exports = {
     loginUser,
     loginAtm,
     resetpass,
-    updatepass
+    updatepass,
+    activateUser
 }
