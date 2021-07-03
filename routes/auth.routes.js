@@ -2,10 +2,15 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 const { validateFields } = require('../middlewares/validate-fields');
-const { loginUser, loginAtm, resetpass, updatepass, activateUser } = require('../controllers/auth.controller');
+const { getUserAdmin, loginUser, loginAtm, resetpass, updatepass, activateUser } = require('../controllers/auth.controller');
 const { verifyEmailLogin, verifyDocumentLogin } = require('../helpers/db-validators');
 
 const router = Router();
+
+router.post('/getadmin', [
+    check('token', 'El token es requerido').not().isEmpty(),
+    validateFields
+], getUserAdmin);
 
 router.post('/loginuser',[
     check('email', 'El correo es requerido').isEmail(),

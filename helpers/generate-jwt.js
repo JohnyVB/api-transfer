@@ -20,7 +20,23 @@ const generateJWT = ( uid = '' ) => {
     })
 }
 
+const verifyJWT = (token = '') => {
+    
+    return new Promise((resolve, reject) => {
+
+        jwt.verify(token, process.env.SECRETORPRIVATEKEY, (err, decode) => {
+            if (err) {
+                console.log(err);
+                reject('Error al verificar el token');
+            }else{
+                resolve(decode);
+            }
+        });
+    });
+}
+
 module.exports = {
-    generateJWT
+    generateJWT,
+    verifyJWT
 }
 

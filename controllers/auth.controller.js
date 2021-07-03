@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const userModel = require('../models/user.model');
 
-const { generateJWT } = require('../helpers/generate-jwt');
+const { verifyJWT, generateJWT } = require('../helpers/generate-jwt');
 const { sendEmail } = require('../helpers/nodemailerHandler');
 
 const logEmail = async (user, password, res) => {
@@ -39,8 +39,6 @@ const logEmail = async (user, password, res) => {
     }
 }
 
-
-
 const loginUser = async (req = request, res = response) => {
 
     const { email, password } = req.body;
@@ -65,6 +63,32 @@ const loginAtm = async (req = request, res = response) => {
         });
     }
 
+}
+
+const getUserAdmin = async (req = request, res = response) => {
+    try {
+        const { token } = req.body;
+
+        const { uid } = await verifyJWT(token);
+        
+        const user = await userModel.findById(uid).populate('cashBox');
+
+        if (user.rol !== 'ADMIN_ROLE') {
+            return res.status(400).send({
+                msg: 'Usuario no permitido en este portal'
+            });
+        }
+
+        res.status(200).send({
+            user
+        });
+
+    } catch (error) {
+        return res.status(500).send({
+            msg: 'Error en getUserAdmin()',
+            error
+        });
+    }
 }
 
 const resetpass = async (req = request, res = response) => {
@@ -132,6 +156,7 @@ const activateUser = async (req = request, res = response) => {
 module.exports = {
     loginUser,
     loginAtm,
+    getUserAdmin,
     resetpass,
     updatepass,
     activateUser
