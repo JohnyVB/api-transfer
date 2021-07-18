@@ -30,7 +30,7 @@ const transactionSchema = Schema({
 
     deliveredIn: {
         type: Schema.Types.ObjectId,
-        ref: 'transaction',
+        ref: 'cashbox',
         date: {
             type: Date
         }
@@ -38,7 +38,7 @@ const transactionSchema = Schema({
 
     deliveredOut: {
         type: Schema.Types.ObjectId,
-        ref: 'transaction',
+        ref: 'cashbox',
         required: [true, 'Locación de envio es requerida'],
         date: {
             type: Date,

@@ -2,7 +2,7 @@ const { response, request } = require('express');
 
 const transactionModel = require('../models/transaction.model');
 
-//Mostrar una transacción
+
 const transactionGet = async (req = request, res = response) => {
 
     try {
@@ -24,7 +24,6 @@ const transactionGet = async (req = request, res = response) => {
     }
 }
 
-//Crear transacción
 const transactionPost = async (req = request, res = response) => {
 
     try {
